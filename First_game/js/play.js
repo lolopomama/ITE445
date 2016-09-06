@@ -1,17 +1,6 @@
-var mainState = {
-
-	preload: function() {
-        game.load.image('player', 'assets/player.png');
-        game.load.image('wallV', 'assets/wallVertical.png');
-        game.load.image('wallH', 'assets/wallHorizontal.png');
-        game.load.image('coin', 'assets/coin.png');
-        game.load.image('enemy', 'assets/enemy.png');
-	},
-
+var playState = {
+    
 	create: function(){
-			game.stage.backgroundColor = '#3498db' ;
-			game.physics.startSystem(Phaser.Physics.ARCADE);
-			game.renderer.renderSession.roundPixels = true;
 			this.player = game.add.sprite(game.width/2, game.height/2 ,'player');
 			this.player.anchor.setTo(0.5, 0.5);
 
@@ -59,7 +48,7 @@ var mainState = {
             this.scoreLabel = game.add.text(30,30, 'score : 0', {
                 font: '18px Arial', fill: '#ffffff'
             });
-            this.score = 0 ;
+            game.global.score = 0 ;
             game.add.text()
             
         // Create an enemy group with aecade physics
@@ -91,7 +80,7 @@ var mainState = {
 
     
     playerDie: function() {
-        game.state.start('main');
+        game.state.start('menu');
             },
     
     
@@ -147,21 +136,10 @@ var mainState = {
         
     },
     
-    takeCoin: function() {
-        // Kill the coin
-        this.coin.kill();
-        
-        //Increase the score
-        this.score += 5;
-        
-        //Update the score
-        this.scoreLabel.text = 'score : ' + this.score;
-    },
-    
     
     takeCoin: function(player, coin) {
-        this.score += 5;
-        this.scoreLabel.text = 'score: ' + this.score;
+        game.global.score += 5;
+        this.scoreLabel.text = 'score: ' + game.global.score;
         
         this.updateCoinPosition();
     },
@@ -187,7 +165,5 @@ var mainState = {
 	},
 };
 
-var game = new Phaser.Game(500, 340, Phaser.AUTO, "gameDiv");
-game.state.add('main', mainState);
-game.state.start('main'); //To start our main State.
+
 
