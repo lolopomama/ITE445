@@ -6,8 +6,11 @@ var menuState = {
         
         //Display the name of the game
         
-        var nameLabel = game.add.text(game.width/2, 80, 'Super Coin Box', {font: '50px Arial', fill: '#ffffff' });
+        var nameLabel = game.add.text(game.width/2, -50, 'Super Coin Box', {font: '50px Arial', fill: '#ffffff' });
         nameLabel.anchor.setTo(0.5, 0.5);
+        
+        game.add.tween(nameLabel).to({y: 80}, 1500).easing(Phaser.Easing.Bounce.Out).start();
+        
         
         //Show the score at the senter of the screen
         
@@ -18,11 +21,15 @@ var menuState = {
         var startLabel = game.add.text(game.width/2, game.height-80, 'press the up arrorw key to start ');
         startLabel.anchor.setTo(0.5,0.5);
         
+        game.add.tween(startLabel).to({angle: -2}, 500).to({angle: 2 }, 1000 ).to({angle:0}, 500).loop().start();
+        
         //create a new phaser keyboard are invisible 
         var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         upKey.onDown.add(this.start, this);
         
     },
+    
+
     
 start: function() {
     //Starting the actual game

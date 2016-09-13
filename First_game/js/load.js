@@ -11,7 +11,7 @@ var loadState = {
     game.load.setPreloadSprite(progressBar);
 
     //Load all our assets
-        game.load.image('player', 'assets/player.png');
+        game.load.spritesheet('player', 'assets/player2.png', 20, 20);
         game.load.image('wallV', 'assets/wallVertical.png');
         game.load.image('wallH', 'assets/wallHorizontal.png');
         game.load.image('coin', 'assets/coin.png');
@@ -20,6 +20,20 @@ var loadState = {
     //Load a new assets
         game.load.image ('background', 'assets/background.png');
 
+        //Sound when the player jump
+        game.load.audio('jump', ['assets/jump.ogg', 'assets/jump.mp3']);
+        
+        //sound when taked the coin
+        game.load.audio('coin', ['assets/coin.ogg', 'assets/coin.mp3']);
+        
+        //sound when player die
+        game.load.audio('dead', ['assets/dead.ogg', 'assets/dead.mp3']);
+        
+        //Load BG sound
+        game.load.audio('music', [ 'assets/music.mp3']);
+        
+        //Pixel
+        game.load.image('pixel', 'assets/pixel.png');
 },
     create: function(){
         //go to menu state
