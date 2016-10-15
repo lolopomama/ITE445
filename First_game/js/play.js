@@ -58,7 +58,7 @@ var playState = {
             this.enemies.createMultiple(10, 'enemy');
         
         //Call 'addEnemy' every 2 seconds : Should created addEnemy function
-            game.time.events.loop(2200, this.addEnemy, this);
+            this.nextEnemy = 0;
             game.time.events.loop(1000, this.addEnemy2, this);
         
         //add AUDIO 
@@ -74,13 +74,20 @@ var playState = {
             this.player.animations.add('right', [1,2] , 8, true);
         //created LEFT animation 
             this.player.animations.add('left', [3,4], 8, true);
-        this.emitter = game.add.emitter(0,0,15);
-        this.emitter.makeParticles('pixel');
-        this.emitter.setYSpeed(-150, 150);
-        this.emitter.setXSpeed(-150,150);
-        this.emitter.setScale(2 , 0,2,0,800);
-        this.emitter.gravity = 0;
+            this.emitter = game.add.emitter(0,0,15);
+            this.emitter.makeParticles('pixel');
+            this.emitter.setYSpeed(-150, 150);
+            this.emitter.setXSpeed(-150,150);
+            this.emitter.setScale(2 , 0,2,0,800);
+            this.emitter.gravity = 0;
         
+            game.input.keyboard.addKeyCapture(
+            [Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT,Phaser.Keyboard.RIGHT]);
+            
+            this.wasd = {
+                up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+                left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+                right: game.input.keyboard.addKey(Phaser.Keyboard.D)};
 	       },
     
     update: function(){
@@ -102,6 +109,12 @@ var playState = {
         this.playerDie();
         }  
         
+        
+        
+        if(this.nextEnemy < game.time.now){
+            this.addEnemy();
+            this.nextEnemy = game.time.now + 2200;
+        }
         
 	       },
 
@@ -191,28 +204,29 @@ var playState = {
     
 	movePlayer: function() {
 
-			if (this.cursor.left.isDown) {
+			if (this.cursor.left.isDown || this.wasd.left.isDowm) {
 				this.player.body.velocity.x = -200;
                 this.player.animations.play('left'); //Left animation
 			}
 
-			else if (this.cursor.right.isDown) {
+			else if (this.cursor.right.isDown || this.wasd.right.isDown) {
 				this.player.body.velocity.x = 200;
                 this.player.animations.play('right'); //Right animation
 			}
 
 			else {
 				this.player.body.velocity.x = 0;
-                
                 this.player.animations.stop();
                 this.player.frame = 0;
 			}
 
-			if (this.cursor.up.isDown && this.player.body.touching.down){
+			if (this.cursor.up.isDown || this.wasd.up.isDown && this.player.body.touching.down){
 				this.player.body.velocity.y = -320;
 			}
         this.jumpSound.play();
 	},
+    
+    
     
     startMenu: function() {
             game.state.start('menu');  

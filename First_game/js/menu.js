@@ -6,15 +6,18 @@ var menuState = {
         
         //Display the name of the game
         
-        var nameLabel = game.add.text(game.width/2, -50, 'Super Coin Box', {font: '50px Arial', fill: '#ffffff' });
+        var nameLabel = game.add.text(game.width/2, -50, 'Super Coin Box', {font: '80px Geo', fill: '#ffffff' });
         nameLabel.anchor.setTo(0.5, 0.5);
         
         game.add.tween(nameLabel).to({y: 80}, 1500).easing(Phaser.Easing.Bounce.Out).start();
         
         
         //Show the score at the senter of the screen
+        //adding High score
         
-        var scoreLabel = game.add.text(game.width/2, game.height/2, 'score: ' + game.global.score, {font:'25px Arial', fill: '#ffffff'});
+        var text = 'score' + game.global.score + '\nbest score: ' + localStorage.getItem('bestscore');
+        
+        var scoreLabel = game.add.text(game.width/2, game.height/2, text, { font: '25px Arial', fill: '#ffffff', align: 'center' });
         scoreLabel.anchor.setTo(0.5,0.5);
         
         //Explain how to start the game
@@ -27,9 +30,28 @@ var menuState = {
         var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         upKey.onDown.add(this.start, this);
         
+        if(!localStorage.getItem('bestscore')){
+            localStorage.setItem('bestscore', 0);
+        }
+        if(game.global.score > localStorage.getItem('bestscore')){
+            
+            localStorage.setItem('bestScore', game.global.score);
+        }
+        
+        this.muteButton = game.add.button(20 , 20 ,'mute', this.toggleSound, this );
     },
     
-
+toggleSound: function() {
+        game.sound.mute = !game.sound.mute;
+        
+        this.muteButton.frame = game.sound.mute ? 1:0 ;
+    
+//            if (game.sound.mute) {
+//                    this.muteButton.frame = 1;
+//            }else {
+//                    this.muteButton.frame = 0;
+//            }
+    },
     
 start: function() {
     //Starting the actual game
