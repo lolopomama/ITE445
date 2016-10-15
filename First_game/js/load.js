@@ -19,6 +19,11 @@ var loadState = {
 
     //Load a new assets
         game.load.image ('background', 'assets/background.png');
+        
+        game.load.spritesheet('mute', 'assets/muteButton.png', 28, 22);
+        game.load.image('jumpButton', 'assets/jumpButton.png');
+        game.load.image('rightButton', 'assets/rightButton.png');
+        game.load.image('leftButton', 'assets/leftButton.png');
 
         //Sound when the player jump
         game.load.audio('jump', ['assets/jump.ogg', 'assets/jump.mp3']);
@@ -39,5 +44,5 @@ var loadState = {
     create: function(){
         //go to menu state
         game.state.start('menu');
-    }
+    },
 }

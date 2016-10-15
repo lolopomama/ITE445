@@ -1,13 +1,24 @@
 var playState = {
     
 	create: function(){
-			this.player = game.add.sprite(game.width/2, game.height/2 ,'player');
+			
+            this.cursor = game.input.keyboard.createCursorKeys();
+             game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT,Phaser.Keyboard.RIGHT]);
+            
+            this.wasd = {
+                up: game.input.keyboard.addKey(Phaser.Keyboard.W),
+                left: game.input.keyboard.addKey(Phaser.Keyboard.A),
+                right: game.input.keyboard.addKey(Phaser.Keyboard.D)};
+            this.player = game.add.sprite(game.width/2, game.height/2 ,'player');
 			this.player.anchor.setTo(0.5, 0.5);
 
 			game.physics.arcade.enable(this.player);
 			this.player.body.gravity.y = 500;
 
-			this.cursor = game.input.keyboard.createCursorKeys();
+			
+                if (!game.device.desktop) {
+                this.addMobileInputs();
+                }
 
 			//created a new group
 			this.walls = game.add.group();
@@ -81,13 +92,11 @@ var playState = {
             this.emitter.setScale(2 , 0,2,0,800);
             this.emitter.gravity = 0;
         
-            game.input.keyboard.addKeyCapture(
-            [Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT,Phaser.Keyboard.RIGHT]);
-            
-            this.wasd = {
-                up: game.input.keyboard.addKey(Phaser.Keyboard.W),
-                left: game.input.keyboard.addKey(Phaser.Keyboard.A),
-                right: game.input.keyboard.addKey(Phaser.Keyboard.D)};
+        if (!game.device.desktop) {
+            this.rotateLabel = game.add.text(game.width/2, game.height/2, '', { font: '30px Arial' , fill: '#fff', backgroundColor: '#000' });
+            this.rotateLabel.anchor.setTo(0.5, 0.5); game.scale.onOrientationChange.add(this.orientationChange, this);
+            this.orientationChange();
+        }
 	       },
     
     update: function(){
@@ -112,8 +121,10 @@ var playState = {
         
         
         if(this.nextEnemy < game.time.now){
-            this.addEnemy();
-            this.nextEnemy = game.time.now + 2200;
+        var start = 4000, end = 1000, score = 100;
+        var delay = Math.max( start - (start - end) * game.global.score / score, end);
+        this.addEnemy();
+        this.nextEnemy = game.time.now + delay;
         }
         
 	       },
@@ -187,6 +198,59 @@ var playState = {
         
     },
     
+    addMobileInputs: function() {
+        var jumpButton = game.add.sprite(350, 240, 'jumpButton');
+        jumpButton.inputEnabled = true;
+        jumpButton.alpha = 0.5;
+        jumpButton.events.onInputDown.add(this.jumpPlayer, this);
+        
+        this.moveLeft = false;
+        this.moveRight = false;
+        
+        var leftButton = game.add.sprite(50, 240, 'leftButton');
+        leftButton.inputEnabled = true;
+        leftButton.alpha = 0.5;
+        leftButton.events.onInputOver.add(this.setLeftTrue, this);
+        leftButton.events.onInputOut.add(this.setLeftFalse, this);
+        leftButton.events.onInputDown.add(this.setLeftTrue, this);
+        leftButton.events.onInputUp.add(this.setLeftFalse, this);
+        
+        var rightButton = game.add.sprite(130, 240, 'rightButton');
+        rightButton.inputEnabled = true;
+        rightButton.alpha = 0.5;
+        rightButton.events.onInputOver.add(this.setRightTrue, this);
+        rightButton.events.onInputOut.add(this.setRightFalse, this);
+        rightButton.events.onInputDown.add(this.setRightTrue, this);
+        rightButton.events.onInputUp.add(this.setRightFalse, this);
+    },
+    
+    setLeftTrue: function() {
+        this.moveLeft = true;
+    },
+    
+    setLeftFalse: function() {
+        this.moveLeft = false;
+    },
+
+    setRightTrue: function() {
+        this.moveRight = true;
+    },
+    
+    setRightFalse: function() {
+        this.moveRight = false;
+    },
+    
+    orientationChange: function() {
+        if (game.scale.isPortrait) {
+            game.paused = true;
+            this.rotateLabel.text = 'rotate your device in landscape';
+        }
+        
+        else {
+            game.paused = false;
+            this.rotateLabel.text = '';
+        }
+    },
     
     takeCoin: function(player, coin) {
         game.global.score += 5;
@@ -203,7 +267,16 @@ var playState = {
 
     
 	movePlayer: function() {
-
+            
+            if (game.input.totalActivePointers == 0) {
+                this.moveLeft = false;
+                this.moveRight = false;
+            }
+        
+            if (this.cursor.up.isDown || this.wasd.up.isDown ){
+				this.jumpPlayer();
+			}
+        
 			if (this.cursor.left.isDown || this.wasd.left.isDowm) {
 				this.player.body.velocity.x = -200;
                 this.player.animations.play('left'); //Left animation
@@ -220,12 +293,15 @@ var playState = {
                 this.player.frame = 0;
 			}
 
-			if (this.cursor.up.isDown || this.wasd.up.isDown && this.player.body.touching.down){
-				this.player.body.velocity.y = -320;
-			}
-        this.jumpSound.play();
+			
 	},
     
+    jumpPlayer: function() {
+        if (this.player.body.touching.down) {
+                this.player.body.velocity.y = -320;
+                this.jumpSound.play();
+            }
+    },
     
     
     startMenu: function() {
