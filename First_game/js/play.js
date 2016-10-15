@@ -277,12 +277,12 @@ var playState = {
 				this.jumpPlayer();
 			}
         
-			if (this.cursor.left.isDown || this.wasd.left.isDowm) {
+			if (this.cursor.left.isDown || this.wasd.left.isDowm || this.moveLeft ) {
 				this.player.body.velocity.x = -200;
                 this.player.animations.play('left'); //Left animation
 			}
 
-			else if (this.cursor.right.isDown || this.wasd.right.isDown) {
+			else if (this.cursor.right.isDown || this.wasd.right.isDown|| this.moveRight) {
 				this.player.body.velocity.x = 200;
                 this.player.animations.play('right'); //Right animation
 			}
